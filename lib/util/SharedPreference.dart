@@ -81,6 +81,9 @@ class SharedPreference {
   }
 
   String getString(String key) {
+    if (key == null) {
+      return null;
+    }
     return sharedPreference.getString(key);
   }
 
@@ -93,6 +96,9 @@ class SharedPreference {
   }
 
   Map<String, dynamic> getJson(String key) {
+    if(sharedPreference == null){
+      create();
+    }
     String value = sharedPreference.getString(key);
     if (value == null) {
       return null;

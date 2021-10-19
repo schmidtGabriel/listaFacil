@@ -46,25 +46,6 @@ class _SplashState extends ActivityState {
             ),
           ),
 
-          // Positioned(
-          //   child: Align(
-          //     alignment: Alignment.bottomCenter,
-          //     child: Container(
-          //       margin: EdgeInsets.only(bottom: 40.0),
-          //       child: Text('© Artmark - Todos os direitos reservados',
-          //         textScaleFactor: 1.0,
-          //         textAlign: TextAlign.center,
-          //         style: TextStyle(
-          //           decoration: TextDecoration.none,
-          //           fontFamily: 'Aleo',
-          //           fontStyle: FontStyle.normal,
-          //           fontSize: 12.0,
-          //           color: Colors.white
-          //         ),
-          //       ),
-          //     ),
-          //   ),
-          // ),
 
         ],
       ),

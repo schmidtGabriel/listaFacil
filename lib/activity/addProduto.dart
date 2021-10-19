@@ -1,9 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:listafacil/model/Model.dart';
 import 'package:listafacil/util/Activity.dart';
+import 'package:listafacil/util/CurrencyInputFormatter.dart';
+import 'package:listafacil/util/Functions.dart';
 
 
 import '../main.dart';
@@ -26,10 +29,13 @@ class _addProduto extends ActivityState {
 
   Lista lista;
 
-  var controllerNome = TextEditingController();
+   var controllerNome = TextEditingController();
   var controllerQuantidade = TextEditingController();
+  var controllerPreco = TextEditingController();
 
+  final focusNome = FocusNode();
   final focusQuantidade = FocusNode();
+  final focusPreco = FocusNode();
 
 
   void showToast() {
@@ -129,7 +135,7 @@ class _addProduto extends ActivityState {
             child: Scaffold(
           appBar: topbar(context, drawerKey),
           body:Container(
-            color: Colors.grey,
+            color: app.bgColor,
             height: double.infinity,
             width: double.infinity,
             child: Stack(
@@ -179,6 +185,8 @@ class _addProduto extends ActivityState {
                         ),
 
 
+
+
                         Container(
                             margin: EdgeInsets.only(right: 20.0, left: 20.0, bottom: 10.0),
                             alignment: Alignment.centerRight,
@@ -192,6 +200,7 @@ class _addProduto extends ActivityState {
                               onFieldSubmitted: (v){
                                 FocusScope.of(context).requestFocus(focusQuantidade);
                               },
+                              focusNode: focusNome,
                               controller: controllerNome,
                               keyboardType: TextInputType.text,
                               textCapitalization: TextCapitalization.sentences,
@@ -228,8 +237,8 @@ class _addProduto extends ActivityState {
 
 
 
-                        Container(
-                            margin: EdgeInsets.only(right: 20.0, left: 20.0, bottom: 20.0),
+                      Container(
+                            margin: EdgeInsets.only(right: 20.0, left: 20.0, bottom: 10.0),
                             alignment: Alignment.centerRight,
                             padding: EdgeInsets.only(left: 3, right: 3),
                             decoration: BoxDecoration(
@@ -237,7 +246,10 @@ class _addProduto extends ActivityState {
                                 border: Border.all(color: Colors.black, width: 1.0, style: BorderStyle.solid),
                                 borderRadius: BorderRadius.all(Radius.circular(10.0))
                             ),
-                            child: TextField(
+                            child: TextFormField(
+                              onFieldSubmitted: (v){
+                                FocusScope.of(context).requestFocus(focusPreco);
+                              },
                               focusNode: focusQuantidade,
                               controller: controllerQuantidade,
                               keyboardType: TextInputType.number,
@@ -255,14 +267,82 @@ class _addProduto extends ActivityState {
                             )
                         ),
 
+
+                          Container(
+                          margin: EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0, bottom: 5.0),
+                          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                          alignment: Alignment.centerLeft,
+                          child: Text('Valor Unidade'.toUpperCase(),
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              decoration: TextDecoration.none,
+                              fontFamily: 'Aleo',
+                              fontWeight:FontWeight.bold,
+                              fontSize: 14.0,
+                              color: app.PrimaryColor,
+                            ),
+                          ),
+                        ),
+
+
+
+
+                        Container(
+                            margin: EdgeInsets.only(right: 20.0, left: 20.0, bottom: 20.0),
+                            alignment: Alignment.centerRight,
+                            padding: EdgeInsets.only(left: 3, right: 3),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.black, width: 1.0, style: BorderStyle.solid),
+                                borderRadius: BorderRadius.all(Radius.circular(10.0))
+                            ),
+                            child: TextFormField(
+                              inputFormatters: [  
+                                  WhitelistingTextInputFormatter.digitsOnly,
+                                  // Fit the validating format.
+                                  //fazer o formater para dinheiro
+                                  CurrencyInputFormatter("pt_Br")
+                              ],
+                              focusNode: focusPreco,
+                              controller: controllerPreco,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  border: InputBorder.none
+                              ),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15
+                              ),
+                              onChanged: (item) {
+                                setState(() {
+                                });
+                              },
+                            )
+                        ),
+
                         GestureDetector(
                             onTap: () async {
-                              Produto produto = Produto(lista.produtos.length, controllerQuantidade.text, controllerNome.text, false);
+                              if(controllerNome.text.isEmpty){
+                                return ScaffoldMessenger
+                                    .of(context)
+                                    .showSnackBar(SnackBar(content: Text("Faltou nome do produto")));
+                              }
+                              if(controllerQuantidade.text.isEmpty){
+                                return  ScaffoldMessenger
+                                    .of(context)
+                                    .showSnackBar(SnackBar(content: Text("Faltou quantidade do produto")));
+                              }
+
+                              Produto produto = Produto(lista.produtos.length, controllerQuantidade.text, controllerNome.text, false,  controllerPreco.text, OnlyNumbers(controllerPreco.text));
 
                               lista.produtos.add(produto);
 
                               controllerNome.text = "";
                               controllerQuantidade.text = "";
+                              controllerPreco.text = "";
+
+                              FocusScope.of(context).requestFocus(focusNome);
+
 
                               ScaffoldMessenger
                                   .of(context)
@@ -286,12 +366,13 @@ class _addProduto extends ActivityState {
 
                         GestureDetector(
                             onTap: () async {
-                                  Produto produto = Produto(lista.produtos.length, controllerQuantidade.text, controllerNome.text, false);
+                              if(controllerNome.text.isNotEmpty){
+                                Produto produto = Produto(lista.produtos.length, controllerQuantidade.text, controllerNome.text, false, controllerPreco.text, OnlyNumbers(controllerPreco.text));
 
-                                  lista.produtos.add(produto);
+                                lista.produtos.add(produto);
+                              }
 
-
-                                  Navigator.of(context).pop(lista.toMap());
+                              Navigator.of(context).pop(lista.toMap());
                             },
                             child: Container(
                               width: double.infinity,
@@ -301,7 +382,7 @@ class _addProduto extends ActivityState {
                                   color: Colors.black,
                                   borderRadius: BorderRadius.all(Radius.circular(15.0))
                               ),
-                              child: Text("SALVAR", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.0),),
+                              child: Text("CONCLUIR", textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14.0))
                             )
                         )
                       ],

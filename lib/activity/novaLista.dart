@@ -83,9 +83,8 @@ class _novaLista extends ActivityState {
                   .showSnackBar(SnackBar(content: Text("${produto.nome} Removido")));
             },
             child: Container(
-          height: 50.0,
-          margin: EdgeInsets.only(top: 10.0, right: 20.0, left: 20.0),
-          padding: EdgeInsets.all(5.0),
+          margin: EdgeInsets.only(top: 5.0, bottom: 5.0, right: 20.0, left: 20.0),
+          padding: EdgeInsets.all(10.0),
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10.0),
@@ -212,7 +211,7 @@ class _novaLista extends ActivityState {
             child: Scaffold(
                 appBar: topbar(context, drawerKey),
                 body: Container(
-                  color: Colors.grey,
+                  color: app.bgColor,
                   height: double.infinity,
                   width: double.infinity,
                   child: Stack(

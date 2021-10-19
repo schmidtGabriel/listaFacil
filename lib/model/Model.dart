@@ -94,17 +94,21 @@ class Lista {
 class Produto {
   String quantidade = "0";
   String nome = "";
+  String formattedPrice = "";
+  int price = 0;
   bool comprado = false;
   int id = 0;
 
 
   Produto.isEmpty();
 
-  Produto(this.id, this.quantidade, this.nome, this.comprado);
+  Produto(this.id, this.quantidade, this.nome, this.comprado, this.formattedPrice, this.price);
 
   Produto.fromJson(Map<String, dynamic> json) {
   this.id = json["id"];
   this.quantidade = json["quantidade"];
+  this.price = json["price"];
+  this.formattedPrice = json["formattedPrice"];
   this.nome = json["nome"];
   this.comprado = json["comprado"];
 
@@ -114,6 +118,8 @@ class Produto {
     Map<String, dynamic> result = {
       "id": this.id,
       "quantidade": this.quantidade,
+      "price": this.price,
+      "formattedPrice": this.formattedPrice,
       "nome": this.nome,
       "comprado": this.comprado,
     };

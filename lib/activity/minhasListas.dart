@@ -100,25 +100,13 @@ class _minhasListas extends ActivityState {
          });
 
       },
-        onLongPress: (){
-          Navigator.of(context).pushNamed("novaLista", arguments: lista.toMap()).then((value) => {
-
-          setState((){
-            Map<String, dynamic> json = app.pref.getJson("listas");
-            app.compra = Compra.fromJson(json);
-          })
-
-
-          });
-        },
       child: Slidable(
           actionPane: SlidableDrawerActionPane(),
-          actionExtentRatio: 0.25,
+          actionExtentRatio: 0.15,
           child: Container(
-        height: 80.0,
-        margin: EdgeInsets.only(top: 10.0, right: 20.0, left: 20.0),
-        padding: EdgeInsets.all(10.0),
-        decoration: BoxDecoration(
+            margin: EdgeInsets.only(top: 5.0, bottom: 5.0, right: 20.0, left: 20.0),
+            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
+            decoration: BoxDecoration(
             color: (lista.finalizada == true)?Colors.green:Colors.white,
             borderRadius: BorderRadius.circular(10.0),
             border: Border.all(color: app.PrimaryColor, width: 1, style: BorderStyle.solid)
@@ -174,6 +162,22 @@ class _minhasListas extends ActivityState {
                 Message.fromMsg(this, context, "Lista compartilhada com sucesso.").show(false)
 
                 })
+              },
+            ),
+            IconSlideAction(
+              caption: 'Editar',
+              color: Colors.green,
+              icon: Icons.edit,
+              onTap: () => {
+                Navigator.of(context).pushNamed("novaLista", arguments: lista.toMap()).then((value) => {
+
+                setState((){
+                Map<String, dynamic> json = app.pref.getJson("listas");
+                app.compra = Compra.fromJson(json);
+                })
+
+
+              })
               },
             ),
           ],
@@ -248,7 +252,7 @@ class _minhasListas extends ActivityState {
         child: Scaffold(
           appBar: topbar(context, drawerKey),
           body:Container(
-            color: Colors.grey,
+            color: app.bgColor,
             height: double.infinity,
             width: double.infinity,
             child: Stack(

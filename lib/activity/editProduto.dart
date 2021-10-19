@@ -1,9 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:listafacil/model/Model.dart';
 import 'package:listafacil/util/Activity.dart';
+import 'package:listafacil/util/CurrencyInputFormatter.dart';
+import 'package:listafacil/util/Functions.dart';
 
 
 import '../main.dart';
@@ -28,8 +31,10 @@ class _editProduto extends ActivityState {
 
   var controllerNome = TextEditingController();
   var controllerQuantidade = TextEditingController();
+  var controllerPreco = TextEditingController();
 
   final focusQuantidade = FocusNode();
+  final focusPreco = FocusNode();
 
   Produto produto;
 
@@ -168,6 +173,8 @@ class _editProduto extends ActivityState {
       this.produto = Produto.fromJson(ModalRoute.of(context).settings.arguments);
       controllerNome.text  = produto.nome;
       controllerQuantidade.text = produto.quantidade;
+      controllerPreco.text = produto.formattedPrice;
+
     }
 
     return WillPopScope(
@@ -190,7 +197,7 @@ class _editProduto extends ActivityState {
             child: Scaffold(
           appBar: topbar(context, drawerKey),
           body:Container(
-            color: Colors.grey,
+            color: app.bgColor,
             height: double.infinity,
             width: double.infinity,
             child: Stack(
@@ -298,9 +305,65 @@ class _editProduto extends ActivityState {
                                 border: Border.all(color: Colors.black, width: 1.0, style: BorderStyle.solid),
                                 borderRadius: BorderRadius.all(Radius.circular(10.0))
                             ),
-                            child: TextField(
+                            child: TextFormField(
+                              onFieldSubmitted: (v){
+                                FocusScope.of(context).requestFocus(focusPreco);
+                              },
                               focusNode: focusQuantidade,
                               controller: controllerQuantidade,
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                  border: InputBorder.none
+                              ),
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 15
+                              ),
+                              onChanged: (item) {
+                                setState(() {
+                                });
+                              },
+                            )
+                        ),
+
+
+                          Container(
+                          margin: EdgeInsets.only(left: 20.0, right: 20.0, top: 10.0, bottom: 5.0),
+                          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                          alignment: Alignment.centerLeft,
+                          child: Text('Valor Unidade'.toUpperCase(),
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              decoration: TextDecoration.none,
+                              fontFamily: 'Aleo',
+                              fontWeight:FontWeight.bold,
+                              fontSize: 14.0,
+                              color: app.PrimaryColor,
+                            ),
+                          ),
+                        ),
+
+
+
+
+                        Container(
+                            margin: EdgeInsets.only(right: 20.0, left: 20.0, bottom: 20.0),
+                            alignment: Alignment.centerRight,
+                            padding: EdgeInsets.only(left: 3, right: 3),
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.black, width: 1.0, style: BorderStyle.solid),
+                                borderRadius: BorderRadius.all(Radius.circular(10.0))
+                            ),
+                            child: TextFormField(
+                              inputFormatters: [  
+                                  WhitelistingTextInputFormatter.digitsOnly,
+                                  // Fit the validating format.
+                                  //fazer o formater para dinheiro
+                                  CurrencyInputFormatter("pt_Br")
+                              ],
+                              focusNode: focusPreco,
+                              controller: controllerPreco,
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                   border: InputBorder.none
@@ -320,7 +383,7 @@ class _editProduto extends ActivityState {
 
                         GestureDetector(
                             onTap: () async {
-                                  Produto produto = Produto(lista.produtos.length, controllerQuantidade.text, controllerNome.text, false);
+                                  Produto produto = Produto(lista.produtos.length, controllerQuantidade.text, controllerNome.text, false,  controllerPreco.text, OnlyNumbers(controllerPreco.text));
 
                                   Navigator.of(context).pop(produto.toMap());
                             },
